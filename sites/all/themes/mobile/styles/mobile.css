@@ -226,7 +226,7 @@ h1#page-title {
 	/* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient(  startColorstr='#008fdb',
 		endColorstr='#00689e', GradientType=0 ); /* IE6-9 */
-	margin: 10px 30px;
+	margin: 10px 0;
 	padding: 10px;
 	font-size: 22px;
 	border-radius: 5px;
@@ -234,7 +234,7 @@ h1#page-title {
 }
 
 .start_button a {
-	text-decoration: none;
-	color: #FFFFFF;
+	text-decoration: none !important;
+	color: #FFFFFF !important;
 	text-shadow: 1px 1px #0000FF;
 }
