@@ -3,20 +3,21 @@
 body {
 	margin: 0;
 	padding: 0;
-	font-family: Arial , Helvetica, sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
 }
 
 #content-wrapper {
 	margin: 10px 10px;
 	font-size: 13px;
 }
-#content-wrapper a{
-	color:#0076B4;
+
+#content-wrapper a {
+	color: #0076B4;
 	text-decoration: none;
 }
 
-#content-wrapper a:hover{
-	color:#0076B4;
+#content-wrapper a:hover {
+	color: #0076B4;
 	text-decoration: underline;
 }
 
@@ -61,17 +62,17 @@ div#footer div.content ul li {
 	list-style-type: none;
 	display: inline-block;
 	margin-right: 3px;
-	padding:0px;
-	list-style-image:none;
+	padding: 0px;
+	list-style-image: none;
 }
 
 div#footer div.content ul li:after {
-    content: "|";
-	padding:0 0 0 15px;
+	content: "|";
+	padding: 0 0 0 15px;
 }
 
 div#footer div.content ul li:last-child:after {
-    content: "";
+	content: "";
 }
 
 div#footer div.content ul li a {
@@ -88,100 +89,151 @@ div#footer div.content ul li a:hover {
 	border-bottom: #CCC dashed 1px;
 	margin: 7px 0 7px 0;
 }
-h1#page-title{
+
+h1#page-title {
 	border-bottom: 1px solid #CCCCCC;
-    font-weight: normal;
-    margin-bottom: 8px;
-    padding: 0 0 5px;
+	font-weight: normal;
+	margin-bottom: 8px;
+	padding: 0 0 5px;
 }
 
 /*******************User Registration Form**************************/
-#user-register-form .form-text,
-#user-login .form-text,
-#user-pass .form-text
-{
-	width:90%;
+#user-register-form .form-text,#user-login .form-text,#user-pass .form-text
+	{
+	width: 90%;
 	background: #ffffff; /* Old browsers */
-background: -moz-linear-gradient(top, #ffffff 0%, #f7f7f7 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f7f7f7)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top, #ffffff 0%,#f7f7f7 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(top, #ffffff 0%,#f7f7f7 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(top, #ffffff 0%,#f7f7f7 100%); /* IE10+ */
-background: linear-gradient(to bottom, #ffffff 0%,#f7f7f7 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f7f7f7',GradientType=0 ); /* IE6-9 */
+	background: -moz-linear-gradient(top, #ffffff 0%, #f7f7f7 100%);
+	/* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff),
+		color-stop(100%, #f7f7f7) ); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #ffffff 0%, #f7f7f7 100%);
+	/* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #ffffff 0%, #f7f7f7 100%);
+	/* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #ffffff 0%, #f7f7f7 100%);
+	/* IE10+ */
+	background: linear-gradient(to bottom, #ffffff 0%, #f7f7f7 100%);
+	/* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient(  startColorstr='#ffffff',
+		endColorstr='#f7f7f7', GradientType=0 ); /* IE6-9 */
 	border: 1px #ccc solid;
 	border-radius: 5px 5px 5px 5px;
 	padding: 5px 10px;
 	margin: 8px 0 4px 0;
 }
 
-#user-register-form .form-actions input,
-#user-login .form-actions input,
-#user-pass .form-actions input,
-#quiz-question-answering-form input[type=submit]
-{
-    background: linear-gradient(to bottom, #008FDB 0%, #00689E 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
-    border-radius: 5px 5px 5px 5px;
-    font-size: 15px;
-    padding: 5px 10px;
-    text-align: center;
+#user-register-form .form-actions input,#user-login .form-actions input,#user-pass .form-actions input,#quiz-question-answering-form input[type=submit]
+	{
+	background: linear-gradient(to bottom, #008FDB 0%, #00689E 100%) repeat
+		scroll 0 0 rgba(0, 0, 0, 0);
+	border-radius: 5px 5px 5px 5px;
+	font-size: 15px;
+	padding: 5px 10px;
+	text-align: center;
 	border: 1px #00689E solid;
-	color:#fff;
+	color: #fff;
 	text-shadow: 1px 1px #0000FF;
 	cursor: pointer;
 }
 
-#quiz-question-answering-form input[type=submit]{
-	margin-bottom:15px;
+#quiz-question-answering-form input[type=submit] {
+	margin-bottom: 15px;
 }
 
-#quiz_progress {display:none}
-#quiz_score_possible,#quiz_score_percent{display:none}
-
-.page-user-register .tabs,
-.page-user-login .tabs,
-.page-user-password .tabs,
-.page-node-take .tabs
-{
-	display:none
+#quiz_progress {
+	display: none
 }
 
-#quiz-question-answering-form ul li{
+#quiz_score_possible,#quiz_score_percent {
+	display: none
+}
+
+.page-user-register .tabs,.page-user-login .tabs,.page-user-password .tabs,.page-node-take .tabs
+	{
+	display: none
+}
+
+#quiz-question-answering-form ul li {
 	list-style: none;
-	margin:0;
+	margin: 0;
 	border-bottom: 1px dashed #ccc;
 }
 
-#quiz-question-answering-form ul li:last-child{
-	margin:0;
+#quiz-question-answering-form ul li:last-child {
+	margin: 0;
 	border-bottom: none;
 }
 
-
-#quiz-question-answering-form .quiz-question-body p{
+#quiz-question-answering-form .quiz-question-body p {
 	font-weight: 600;
-	color:#333
-}
-.form-item-tries-answer label
-{
-	display:none
-}
-.form-item-tries-answer table tr
-{
-	background:none;
-	border-bottom:none;
-	padding:0px;
-	margin:0px;	
-}
-.form-item-tries-answer table tbody
-{
-	border:none;
-}
-.form-item-tries-answer table tr td
-{
-	padding:0px;
-	margin:0px;
-	line-height: 2px;	
+	color: #333
 }
 
+.form-item-tries-answer label {
+	display: none
+}
 
+.form-item-tries-answer table tr {
+	background: none;
+	border-bottom: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+.form-item-tries-answer table tbody {
+	border: none;
+}
+
+.form-item-tries-answer table tr td {
+	padding: 0px;
+	margin: 0px;
+	line-height: 2px;
+}
+
+.txtflt_lft {
+	float: left;
+	width: 47%;
+	font-size: 13px;
+	margin-bottom: 16px;
+}
+
+.imgflt_right {
+	float: right;
+}
+
+.imgflt_right img {
+	margin-top: 20px;
+}
+
+.lower_body {
+	border-top: #CCC solid 1px;
+}
+
+.start_button {
+	text-align: center;
+	background: #008fdb; /* Old browsers */
+	background: -moz-linear-gradient(top, #008fdb 0%, #00689e 100%);
+	/* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #008fdb),
+		color-stop(100%, #00689e) ); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #008fdb 0%, #00689e 100%);
+	/* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #008fdb 0%, #00689e 100%);
+	/* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #008fdb 0%, #00689e 100%);
+	/* IE10+ */
+	background: linear-gradient(to bottom, #008fdb 0%, #00689e 100%);
+	/* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient(  startColorstr='#008fdb',
+		endColorstr='#00689e', GradientType=0 ); /* IE6-9 */
+	margin: 10px 30px;
+	padding: 10px;
+	font-size: 22px;
+	border-radius: 5px;
+}
+
+.start_button a {
+	text-decoration: none;
+	color: #FFFFFF;
+	text-shadow: 1px 1px #0000FF;
+}
