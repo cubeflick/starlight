@@ -230,6 +230,7 @@ h1#page-title {
 	padding: 10px;
 	font-size: 22px;
 	border-radius: 5px;
+	width:250px;
 }
 
 .start_button a {
