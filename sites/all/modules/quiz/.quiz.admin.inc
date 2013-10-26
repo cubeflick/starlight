@@ -520,17 +520,13 @@ function _quiz_categorized_new_term_form(&$form, $form_state, $quiz) {
     '#collapsed' => FALSE,
     '#tree' => FALSE,
   );
-  if(module_exists('hierarchical_select')){
-    $form['new']['term'] = _quiz_hierarchical_select_form();
-  }else{
-    $form['new']['term'] = array(
-	  '#type' => 'textfield',
-	  '#title' => t('Category'),
-	  '#description' => t('Type in the name of the term you would like to add questions from.'),
-	  '#autocomplete_path' => "node/$quiz->nid/questions/term_ahah",
-	  '#field_suffix' => '<a id="browse-for-term" href="javascript:void(0)">' . t('browse') . '</a>',
-    );
-  }
+  $form['new']['term'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Category'),
+    '#description' => t('Type in the name of the term you would like to add questions from.'),
+    '#autocomplete_path' => "node/$quiz->nid/questions/term_ahah",
+    '#field_suffix' => '<a id="browse-for-term" href="javascript:void(0)">' . t('browse') . '</a>',
+  );
   $form['new']['number'] = array(
     '#type' => 'textfield',
     '#title' => t('Number of questions'),
@@ -542,63 +538,6 @@ function _quiz_categorized_new_term_form(&$form, $form_state, $quiz) {
     '#description' => t('The number of points a user will be awarded for each question he gets correct.'),
     '#default_value' => 1,
   );
-}
-
-/**
- * Function to call hierarchical select.
- */
-function _quiz_hierarchical_select_form(){
-  // Load includes/common.inc from the hierarchical select module.
- // module_load_include('inc', 'hierarchical_select', 'includes/common');
-  
-  // Load category based in vocabulary machine name
-  $voc = 'malla';
-  $vocabulary = taxonomy_vocabulary_machine_name_load($voc);
-  $form['malla'] =   array(
-    '#type' => 'hierarchical_select',
-    '#title' => t('Filter by term'),
-    '#description' => t('This is a pointless description.'),
-    // Consult API.txt for an explanation of all these settings.
-    '#config' => array(
-      'module' => 'hs_taxonomy',
-      'params' => array(
-        'vid' => $vocabulary->vid, // Enter your vocabulary ID here.
-        'root_term' => NULL, // Enter a term ID here if you want to display only terms below the term with that ID.
-		'max_depth' => 4,
-      ),
-      'save_lineage'    => 0,
-      'enforce_deepest' => 0,
-      'entity_count'    => 0,
-      'require_entity'  => 0,
-      'resizable'       => 0,
-	  'render_flat_select' => 0,
-      'level_labels' => array(
-        'status' => 1,
-        'labels' => array(
-          0 => t('Curso'),
-          1 => t('Asignatura'),
-          2 => t('Eje'),
-          3 => t('Objetivo'),
-        ),
-      ),
-      'dropbox' => array(
-        // Only allow for a single term or single lineage to be selected.
-        'status' => 0,
-      ),
-      'editability' => array(
-        // Creating new terms from within a form to filter by existing terms
-        // doesn't make sense, hence it is disabled.
-        'status' => 0,
-      ),
-    ),
-    '#default_value' => array(), // To set a default value, fill this with one or more term IDs.
-  );
-
-  //hierarchical_select_common_config_apply( $form['malla'], "taxonomy-$vocabulary->vid");
-  
-  //$element_info = element_info('hierarchical_select');
-  //return array_merge($element_info['#process'], array('hs_taxonomy_widget_process'));
-  return $form['malla'];
 }
 
 /**
@@ -740,9 +679,6 @@ function _quiz_categorized_add_term($form, $form_state) {
  *  The matched integer
  */
 function _quiz_get_id_from_string($string) {
-  if(module_exists('hierarchical_select')){
-	return $string[0];
-  }
   $matches = array();
   preg_match('/\(id:(\d+)\)$/', $string, $matches);
   return isset($matches[1]) ? (int) $matches[1] : FALSE;

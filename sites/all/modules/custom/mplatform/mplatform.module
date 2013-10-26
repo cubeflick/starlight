@@ -1,0 +1,167 @@
+<?php
+/**************************************************************************************
+ * (c) 2013 - Roan Mooij - Mr Media Ltd
+ *
+ * mplatform drupal plugin v1.1
+ *
+ * Note on "SUBCRIPTION_DURATION": After a closed subscription, the user should still
+ * have access for a week
+ *
+ **************************************************************************************/
+
+//===============================[ User Definable ]=====================================
+
+$GLOBALS["SERVICE_IDS"] = array(11612, 11720);
+$GLOBALS["ADMIN_USERS"] = array("admin", "administrator");
+$GLOBALS["COUNTRY_AREA_CODE"] = 31;
+$GLOBALS["PHONE_NO_LENGTH"] = 10;
+$GLOBALS["SUBSCRIPTION_DURATION"] = (3600 * 24 * 7 * 1000); // in millis
+$GLOBALS["MPLATFORM_AUTH_SERVLET"] = "http://mplatform.mrmedia.org/subscription/detail";
+
+//===============================[ Drupal Hooks ]=======================================
+
+/*
+* Hide unecessary stuff on the login form and add a custom validator.
+*/
+function mplatform_form_alter(&$form, &$form_state, $form_id) {
+	if ($form["#id"] == 'user-login') {
+		$form['name']['#title'] = t("Telefoonnummer");
+		$form['pass']['#default_value'] = 'dummy';
+		hide($form['pass']);
+		hide($form['links']);
+		array_unshift($form['#validate'], 'mplatform_login_form_validate');
+	}
+}
+
+/*
+* Here we will validate the phone number, or in case of an admin show the password
+* entry field. Based on the response of the validation request an message is given
+* or the user may proceed.
+* The result of a validated phone number is saved in $form_state and later used in the
+* custom authentication function.
+*/
+function mplatform_login_form_validate(&$form, &$form_state) {
+	$uname = $form_state['values']['name'];
+	$form_state['is-mplatform-subscriber'] = false;
+	if (in_array($uname, $GLOBALS["ADMIN_USERS"])) {
+		show($form['pass']);
+	} else {
+		if (is_numeric($uname) && (strlen($uname) == $GLOBALS["PHONE_NO_LENGTH"])) {
+			$result = check_for_subscription($uname);
+			switch ($result) {
+				case "ACTIVATED":
+					$form_state['is-mplatform-subscriber'] = true;
+					break;
+				default:
+					form_set_error('name', 'Er is geen abonnement voor dit mobiele nummer');
+			}
+		} else {
+			form_set_error('name', 'Dit telefoonnummer is onjuist');
+		}
+	}
+}
+
+function mplatform_form_user_login_block_alter(&$form, &$form_state) {
+	_mplatform_user_login_form_alter($form, $form_state);
+}
+
+function mplatform_form_user_login_alter(&$form, &$form_state) {
+	_mplatform_user_login_form_alter($form, $form_state);
+}
+
+function _mplatform_user_login_form_alter(&$form, &$form_state) {
+	$save_form = $form;
+	$form = array();
+	foreach ($save_form as $key => $value) {
+		if ($key == '#validate') {
+			$form [$key] = array();
+			foreach ($value as $validator) {
+				if ($validator == 'user_login_authenticate_validate') {
+					$validator = 'mplatform_authenticate_validate';
+				}
+				$form[$key][] = $validator;
+			}
+		} else {
+			$form[$key] = $value;
+		}
+	}
+}
+
+function mplatform_authenticate_validate($form, &$form_state) {
+	$uname = $form_state['values']['name'];
+
+	// Do default drupal authentication
+	if (in_array($uname, $GLOBALS["ADMIN_USERS"])) {
+		return user_login_authenticate_validate($form, $form_state);
+	}
+
+	// Do external authentication
+	if ($form_state['is-mplatform-subscriber'] == true) {
+		user_external_login_register($uname, "mplatform-subscriber");
+		$account = user_external_load($uname);
+		assign_role_to_user($account, "Subscriber");
+		$form_state['uid'] = $account->uid;
+	}
+	else {
+		// do nothing
+	}
+}
+
+//===============================[ Custom functions ]=======================================
+
+function check_for_subscription($phone) {
+        $url = $GLOBALS["MPLATFORM_AUTH_SERVLET"] . "?msisdn=" . phone_to_msisdn($phone);
+        $result = json_decode(http_request($url));
+        for ($i = 0; $i < count($result); $i++) {
+		if (is_object($result[$i])) {
+                	if (in_array($result[$i]->serviceId, $GLOBALS["SERVICE_IDS"])) {
+                	        if ($result[$i]->state == "CONFIRMED") {
+                	                if($result[$i]->lastInvoiceState == "SUCCESS") {
+                	                        return "ACTIVATED";
+                	                }
+                	        } elseif ($result[$i]->state = "CLOSED"
+                	                        && $result[$i]->lastInvoiceState = "SUCCESS"
+                	                        && is_in_subscription_period($result[$i]->lastInvoice)) {
+                	                return "ACTIVATED";
+                	        }
+                	}
+		}
+        }
+}
+
+function is_in_subscription_period($invoice_time) {
+        if (((time() * 1000) - $GLOBALS["SUBSCRIPTION_DURATION"]) < $invoice_time) {
+                return true;
+        }
+        return false;
+}
+
+function assign_role_to_user($user, $role_name) {
+	// If the user doesn't already have the role, add the role to that user.
+	$key = array_search($role_name, $user->roles);
+	if ($key == FALSE) {
+		// Get the role id from the roles table.
+		$roles = user_roles(TRUE);
+		$rid = array_search($role_name, $roles);
+		if ($rid != FALSE) {
+			$new_role[$rid] = $role_name;
+			$all_roles = $user->roles + $new_role; // Add new role to existing roles.
+			user_save($user, array('roles' => $all_roles));
+		}
+	}
+}
+
+function phone_to_msisdn($phone) {
+	return $GLOBALS["COUNTRY_AREA_CODE"] . substr($phone, 1);
+}
+
+function http_request($url) {
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: text/xml;charset=utf-8"));
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	$resp = curl_exec($ch);
+	curl_close($ch);
+	return $resp;
+}

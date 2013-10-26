@@ -1,0 +1,4 @@
+name = mplatform_auth
+description = Authenticates with mPlatform by mobile phone number
+package = Other
+core = 7.x

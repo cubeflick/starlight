@@ -222,6 +222,12 @@ function quiz_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
+	  'single_page' => array(
+        'type' => 'int',
+        'size' => 'small',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
     ),
     'primary key' => array('vid'),
     // 'unique keys' => array('vid'),
@@ -787,6 +793,15 @@ function quiz_update_7407(&$sandbox) {
   );
   db_add_field('quiz_node_relationship','auto_update_max_score', $spec);
   return t('Added new auto update max score field to the quiz_node_relationship table');
+}
+
+/**
+ * Adding a field to turn on/off showing all question on one page
+ */
+function quiz_update_7408() {
+  $result = array();
+  db_add_field('quiz_node_properties', 'single_page', array('type' => 'int', 'size' => 'small', 'not null' => TRUE, 'default' => 0));
+  return t('Added a field to turn on/off showing all question on one page');
 }
 
 

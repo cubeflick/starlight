@@ -462,6 +462,7 @@ function theme_quiz_score_incorrect() {
 function theme_quiz_progress($variables) {
   $question_number = $variables['question_number'];
   $num_of_question = $variables['num_questions'];
+  $quiz = $variables['quiz'];
   // TODO Number of parameters in this theme funcion does not match number of parameters found in hook_theme.
   // Determine the percentage finished (not used, but left here for other implementations).
   //$progress = ($question_number*100)/$num_of_question;
@@ -475,7 +476,14 @@ function theme_quiz_progress($variables) {
 
   $output  = '';
   $output .= '<div id="quiz_progress">';
-  $output .= t('Question <span id="quiz-question-number">!x</span> of <span id="quiz-num-questions">@y</span>', array('!x' => $current_question, '@y' => $num_of_question));
+//  $output .= t('Question <span id="quiz-question-number">!x</span> of <span id="quiz-num-questions">@y</span>', array('!x' => $current_question, '@y' => $num_of_question));
+  if ($quiz->single_page) {
+    $output .= format_plural($num_of_question, '<span id="quiz-question-number">1</span> question', '<span id="quiz-question-number">@count</span> questions');
+  }
+  else {
+    $output .= t('Question <span id="quiz-question-number">%x</span> of <span id="quiz-num-questions">%y</span>', array('%x' => $current_question, '%y' => $num_of_question));
+  }
+  
   $output .= '</div>' . "\n";
   // Add div to be used by jQuery countdown
   if ($variables['time_limit']) {
@@ -648,7 +656,45 @@ function theme_quiz_single_question_node($variables) {
   // meaningful stuff here...
   return drupal_render($node->content['body']);
 }
-
+/**
+ * Theme the multi question node.
+ *
+ * @param $nodes
+ *  The question nodes
+ * @return
+ *  Themed html feedback
+ */
+function theme_quiz_multi_question_node($variables) {
+  $nodes = $variables['question_node'];
+  /*echo "<pre>";
+  print_r($nodes);
+  echo "</pre>";
+  die();*/
+  $qno = 0;
+  foreach ($nodes as $node) {
+    $qno++;
+	if(isset($node)){
+      preg_match('|<form[^>]*?>(.*?)</form>|si', $node->body, $matches);
+      $form_free_body = preg_replace('/<input type="submit"[^>]*?>/','',$matches[1]);
+      $item_list[] = array(
+        'data' => str_replace('name="tries', 'name="tries_' . $node->nid . '', $form_free_body),
+//		'class' => "question-{$node->nid} question-number-$qno",
+      );
+	} else {
+		break;
+	}
+  }
+  $form_a = '<form id="quiz-question-answering-form" method="post" accept-charset="UTF-8" action="' . url('node/' . $_SESSION['current_quiz_id']) . '/take">';
+  $form_b = '<input name="op" type="submit" value="' . t('Finish') . '"/></form>';
+  $body = array(
+	array('#markup'=>$form_a),
+	array('#theme'=>'item_list','#items'=>$item_list),
+	array('#markup'=>$form_b),
+	);
+  //echo drupal_render($body);
+  //die();
+  return drupal_render($body);
+}
 /**
  * Theme the stats on the views page
  *
