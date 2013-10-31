@@ -2472,21 +2472,26 @@ function quiz_store_question_result($quiz, $result, $options) {
     $update->execute();
   }
   else {
-     $insert = db_insert('quiz_node_results_answers')
-      ->fields(array('question_nid', 'question_vid', 'result_id', 'is_correct', 'points_awarded', 'answer_timestamp', 'is_skipped', 'is_doubtful', 'number', 'tid'))
-      ->values(array(
-        'question_nid' => $result->nid,
-        'question_vid' => $result->vid,
-        'result_id' => $result->rid,
-        'is_correct' => (int) $result->is_correct,
-        'points_awarded' => $points,
-        'answer_timestamp' => REQUEST_TIME,
-        'is_skipped' => (int) $result->is_skipped,
-        'is_doubtful' => (int) $result->is_doubtful,
-        'number' => $options['question_data']['number'],
-        'tid' => ($quiz->randomization == 3 && $result->tid) ? $result->tid : 0,
-      ))
-      ->execute();
+	
+  	try{
+	  	$insert = db_insert('quiz_node_results_answers')
+	      ->fields(array('question_nid', 'question_vid', 'result_id', 'is_correct', 'points_awarded', 'answer_timestamp', 'is_skipped', 'is_doubtful', 'number', 'tid'))
+	      ->values(array(
+	        'question_nid' => $result->nid,
+	        'question_vid' => $result->vid,
+	        'result_id' => $result->rid,
+	        'is_correct' => (int) $result->is_correct,
+	        'points_awarded' => $points,
+	        'answer_timestamp' => REQUEST_TIME,
+	        'is_skipped' => (int) $result->is_skipped,
+	        'is_doubtful' => (int) $result->is_doubtful,
+	        'number' => $options['question_data']['number'],
+	        'tid' => ($quiz->randomization == 3 && $result->tid) ? $result->tid : 0,
+	      ))
+	      ->execute();
+  	}catch(PDOException $e){
+  		drupal_goto('error');
+  	} 
   }
 }
 
