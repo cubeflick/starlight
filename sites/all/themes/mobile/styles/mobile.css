@@ -238,3 +238,11 @@ h1#page-title {
 	color: #FFFFFF !important;
 	text-shadow: 1px 1px #0000FF;
 }
+
+.errors span{
+	color:red;
+}
+
+.errors img{
+	max-width: 100%;
+}
