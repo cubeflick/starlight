@@ -11,14 +11,115 @@
 
 //===============================[ User Definable ]=====================================
 
-$GLOBALS["SERVICE_IDS"] = array(11612, 11720);
-$GLOBALS["ADMIN_USERS"] = array("admin", "administrator");
-$GLOBALS["COUNTRY_AREA_CODE"] = 31;
-$GLOBALS["PHONE_NO_LENGTH"] = 10;
-$GLOBALS["SUBSCRIPTION_DURATION"] = (3600 * 24 * 7 * 1000); // in millis
-$GLOBALS["MPLATFORM_AUTH_SERVLET"] = "http://mplatform.mrmedia.org/subscription/detail";
+$GLOBALS["SERVICE_IDS"] = array();
+$GLOBALS["ADMIN_USERS"] = array();
+$GLOBALS["COUNTRY_AREA_CODE"] = "";
+$GLOBALS["PHONE_NO_LENGTH"] = "";
+$GLOBALS["SUBSCRIPTION_DURATION"] = ""; // in millis
+$GLOBALS["MPLATFORM_AUTH_SERVLET"] = "";
+
+/***********************Drupal Menu*************/
+function mplatform_menu() {
+
+	$items['admin/mplatform'] = array(
+			'title' => 'Mplatform Global Variable Settings',
+			'description' => 'We can set here the inital values supplied for mplatform API',
+			'page callback' => 'drupal_get_form',
+			'page arguments' => array('set_mplatform_variables'),
+			'access callback' => check_for_admin_users()
+	);
+	
+	return $items;
+}
+
+/************Mplatform settings variables is accesible only by admin users **********/
+function check_for_admin_users(){
+	// Load the currently logged in user.
+	global $user;
+	// Check if the user has the 'administrator' role.
+	if (in_array('administrator', $user->roles)) 
+	{
+	  return true;
+	}
+	return true; 
+	
+}
+
+/******************Drupal Settings function for global variables****************/
+function set_mplatform_variables() {
+
+	$form['service_ids'] = array(
+			'#type' => 'textfield',
+			'#title' => 'Service Ids',
+			'#default_value' => variable_get('service_ids', '11612, 11720'),
+			'#required' => TRUE,
+			'#description' => t('Please place comman saperated service ids'),
+	);
+
+	$form['admin_users'] = array(
+			'#type' => 'textfield',
+			'#title' => 'Admin Users',
+			'#default_value' => variable_get('admin_users', 'admin'),
+			'#required' => TRUE,
+			'#description' => t('Please place comman saperated admin users'),
+	);
+
+	$form['countrycode'] = array(
+			'#type' => 'textfield',
+			'#title' => 'Country Area Code',
+			'#default_value' => variable_get('countrycode', '31'),
+			'#required' => TRUE,
+			'#description' => t('Please place country code'),
+	);
+	
+	$form['phone_length'] = array(
+			'#type' => 'textfield',
+			'#title' => 'Phone Length',
+			'#default_value' => variable_get('phone_length', '10'),
+			'#required' => TRUE,
+			'#description' => t('Please place phone number length'),
+	);
+	
+	$form['subscription_duration'] = array(
+			'#type' => 'select',
+			'#title' => 'Subscription Duration',
+			'#default_value' => variable_get('subscription_duration', '3600 * 24 * 7 * 1000'),
+			'#options'=>array(
+						'3600 * 24 * 1 * 1000'=>'ONE DAY',
+						'3600 * 24 * 7 * 1000'=>'ONE WEEK',
+						'3600 * 24 * 30 * 1000'=>'ONE MONTH',
+						'3600 * 24 * 365 * 1000'=>'ONE YEAR',
+					),
+			'#required' => TRUE,
+			'#description' => t('Please place subscription duration'),
+	);
+	
+	$form['api_url'] = array(
+			'#type' => 'textfield',
+			'#title' => 'Mplatform API Url',
+			'#default_value' => variable_get('api_url', 'http://mplatform.mrmedia.org/subscription/detail'),
+			'#required' => TRUE,
+			'#description' => t('Please place API Url'),
+	);
+	
+	return system_settings_form($form);
+}
+
 
 //===============================[ Drupal Hooks ]=======================================
+
+/******************Function to initialize the global variables*********************/
+function mplatform_init(){
+	
+	$serviceIds = explode(",", variable_get('service_ids'));
+	$GLOBALS["SERVICE_IDS"] = $serviceIds;
+	$adminusers = explode(",", variable_get('admin_users'));
+	$GLOBALS["ADMIN_USERS"] = $adminusers;
+	$GLOBALS["COUNTRY_AREA_CODE"] = variable_get('countrycode');
+	$GLOBALS["PHONE_NO_LENGTH"] = variable_get('phone_length');
+	$GLOBALS["SUBSCRIPTION_DURATION"] = (variable_get('subscription_duration')); // in millis
+	$GLOBALS["MPLATFORM_AUTH_SERVLET"] = variable_get('api_url');
+}
 
 /*
 * Hide unecessary stuff on the login form and add a custom validator.
